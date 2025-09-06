@@ -16,9 +16,9 @@ import (
 )
 
 func main() {
-	a := app.New()
-	w := a.NewWindow("sample GIF Viewer")
-	w.Resize(fyne.NewSize(500, 400))
+	app := app.New()
+	window := app.NewWindow("sample GIF Viewer")
+	window.Resize(fyne.NewSize(500, 400))
 
 	gifImg, err := gif.DecodeAll(bytes.NewReader(assets.GifData))
 	if err != nil {
@@ -28,8 +28,8 @@ func main() {
 
 	img := canvas.NewImageFromImage(gifImg.Image[0])
 	img.FillMode = canvas.ImageFillContain
-	container := container.NewStack(img)
-	w.SetContent(container)
+	stack := container.NewStack(img)
+	window.SetContent(stack)
 
 	// goルーチンでアニメーションを再生
 	go func() {
@@ -61,5 +61,5 @@ func main() {
 	}()
 
 	// ウィンドウを表示してアプリケーションを実行
-	w.ShowAndRun()
+	window.ShowAndRun()
 }
