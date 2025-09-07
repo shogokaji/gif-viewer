@@ -41,13 +41,14 @@ func main() {
 		for {
 			println("gif start")
 			for i, frame := range gifImg.Image {
+				// キャンセルを受け取ったら終了
 				select {
 				case <-ctx.Done():
 					return
 				default:
 				}
 
-				// UIの更新はメインスレッドで実行
+				// UIの更新はメインスレッドで実行する必要があるためDo()を使用して依頼
 				fyne.Do(func() {
 					img.Image = frame
 					img.Refresh()
@@ -68,7 +69,7 @@ func main() {
 		}
 	}()
 
-	// 別のgoルーチンで5秒ごとにメッセージを表示
+	// 並列で処理されることの確認のため別のgoルーチンで5秒ごとにメッセージを表示
 	go func() {
 		total := 0
 		for {
@@ -83,5 +84,6 @@ func main() {
 	}()
 
 	// ウィンドウを表示してアプリケーションを実行
+	// イベントループしている間goルーチンが動き続ける
 	window.ShowAndRun()
 }
