@@ -39,13 +39,6 @@ func main() {
 	// goルーチンでアニメーションを再生
 	go func() {
 		for {
-			select {
-			// キャンセルを受け取ったらアニメーションを停止
-			case <-ctx.Done():
-				return
-			default:
-			}
-
 			println("gif start")
 			for i, frame := range gifImg.Image {
 				select {
