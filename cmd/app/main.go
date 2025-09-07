@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"image/gif"
 	"math/rand"
@@ -31,11 +32,28 @@ func main() {
 	stack := container.NewStack(img)
 	window.SetContent(stack)
 
+	// アプリケーション終了時にgoルーチンを停止させるためのcontext
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	// goルーチンでアニメーションを再生
 	go func() {
 		for {
+			select {
+			// キャンセルを受け取ったらアニメーションを停止
+			case <-ctx.Done():
+				return
+			default:
+			}
+
 			println("gif start")
 			for i, frame := range gifImg.Image {
+				select {
+				case <-ctx.Done():
+					return
+				default:
+				}
+
 				// UIの更新はメインスレッドで実行
 				fyne.Do(func() {
 					img.Image = frame
@@ -54,9 +72,13 @@ func main() {
 	go func() {
 		total := 0
 		for {
-			total += rand.Intn(100)
-			println(total)
-			time.Sleep(5 * time.Second)
+			select {
+			case <-ctx.Done():
+				return
+			case <-time.After(5 * time.Second):
+				total += rand.Intn(100)
+				println(total)
+			}
 		}
 	}()
 
