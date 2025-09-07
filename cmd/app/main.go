@@ -54,7 +54,9 @@ func main() {
 				})
 				// フレームの表示時間を設定（GIFの遅延時間 × 10ミリ秒）
 				delay := time.Duration(gifImg.Delay[i]) * 10 * time.Millisecond
-				// 設定した時間だけ待機
+				if delay == 0 {
+					delay = 100 * time.Millisecond
+				}
 
 				select {
 				case <-ctx.Done():
